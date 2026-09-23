@@ -1,3 +1,44 @@
 plugins {
-    id 'com.android.application' version '8.6.1' apply false
+    id 'com.android.application' version '8.6.1'
 }
+
+android {
+    namespace 'com.kaua.cofrebtc'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.kaua.cofrebtc'
+        minSdk 23
+        targetSdk 35
+        versionCode 1
+        versionName '1.0.2'
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['.']
+            res.srcDirs = ['build/generated/res/main']
+        }
+    }
+
+    buildFeatures {
+        buildConfig false
+    }
+}
+
+tasks.register('prepareAndroidSources') {
+    doLast {
+        def resRoot = file('build/generated/res/main')
+        delete resRoot
+        mkdir new File(resRoot, 'layout')
+        mkdir new File(resRoot, 'drawable')
+        mkdir new File(resRoot, 'values')
+        copy { from 'activity_main.xml'; into new File(resRoot, 'layout') }
+        copy { from 'icone.xml'; into new File(resRoot, 'drawable') }
+        copy { from 'strings.xml'; into new File(resRoot, 'values') }
+        copy { from 'styles.xml'; into new File(resRoot, 'values') }
+    }
+}
+
+preBuild.dependsOn tasks.named('prepareAndroidSources')
